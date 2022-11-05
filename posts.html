@@ -1,0 +1,29 @@
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Posts</title><link rel="stylesheet" href="output.css"></head><body class="w-full min-h-screen"><div x-data x-html="await(await fetch('navigation.html')).text()"></div><div x-data="{posts: [], current_posts: [], posts_length: 0, start_index: 0, end_index: 12, peer_page: 12, loading: true}" x-init="
+        posts = await (await fetch('posts.json')).json()
+        posts_length = posts.length - 1
+      " x-effect="
+        //.sort(function(a, b){return parseInt(b.views)- parseInt(a.views)})
+        current_posts = posts.slice(start_index, end_index)
+      " class="mt-14"><div x-show="loading" class="fixed top-0 left-0 right-0 bottom-0 bg-black/80 z-50 grid place-items-center"><div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-indigo-400 anim-duration-2800"></div></div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-20 px-2"><template x-for="(post, index) in current_posts" :key="index"><div><article class="group h-full"><figure class="w-full h-56 overflow-hidden rounded-xl"><img loading="lazy" :src="post.img" class="w-full h-full object-cover shadow-xl transition group-hover:scale-105 group-hover:grayscale-[50%]"/></figure><p class="text-white/60 px-4 mt-2 text-sm" x-text="post['pub-time']"></p><div class="p-4"><a :href="'post.html#'+post.title.replaceAll(' ', '_')" target="_blank"><h3 class="text-lg font-medium text-gray-300 link link-hover" x-text="post.title"></h3></a><p class="mt-2 text-sm leading-relaxed text-gray-400 line-clamp-3" x-text="post.desc"></p><p class="text-gray-400/80 text-xs mt-3" x-text="post['pub_time']"></p></div></article><div class="flex items-center justify-end gap-x-2.5"><span class="flex gap-x-1 items-center bg-white/5 rounded py-1 px-1.5"><span class="text-white/60 text-xs" x-text="post.views"></span> <svg class="w-4 h-4 fill-white/60" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg> </span><span class="flex gap-x-1 items-center bg-white/5 rounded py-1 px-1.5"><span class="text-white/60 text-xs" x-text="post.comments"></span> <svg class="w-4 h-4 fill-white/60" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg> </span><span class="flex gap-x-1 items-center bg-white/5 rounded py-1 px-1.5"><span class="text-white/60 text-xs" x-text="post.likes"></span> <svg class="w-[16px] h-[16px] fill-rose-600" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg> </span><span class="flex gap-x-1 items-center bg-white/5 rounded py-1 px-1.5"><span class="text-white/60 text-xs"><span x-text="post['read-time']"></span>m </span><svg class="w-4 h-4 fill-white/60" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg></span></div></div></template></div><ol class="flex flex-wrap w-11/12 mx-auto justify-center items-center gap-2 text-xs font-medium mt-28"><template x-for="(i, index) in $range(0, posts_length, peer_page)"><li><button x-text="index" :data-paginationbtn-start-index="i" @click="
+                  loading = true
+                  start_index = i
+                  end_index = ( peer_page + i )
+                  moveActivePaginationBtnClass($el)
+                  setTimeout(function() {
+                    loading = false
+                  }, 1000)
+                " class="btn btn-sm btn-outline btn-info block rounded text-center py-1.5 px-2"></button></li></template></ol><span x-init="
+          setTimeout(function(){
+            loading = false
+          }, 800)
+        "></span></div><div x-data x-html="await(await fetch('footer.html')).text()"></div><span x-init="onCreated()"></span><script>async function getPosts(ref) {
+      }
+
+      function moveActivePaginationBtnClass(clickedBtn) {
+        document.querySelector(".pagination-active")?.classList.remove("pagination-active")
+        clickedBtn.classList.add("pagination-active")
+      }
+
+      function onCreated() {
+        document.querySelector("[data-paginationBtn-start-index='0']").classList.add('pagination-active')
+      }</script><script defer="defer" src="app.bundle.js"></script></body></html>
